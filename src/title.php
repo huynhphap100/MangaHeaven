@@ -26,8 +26,8 @@
         </form>
 		<?php 
 			if($user != null){ ?>
-				<div class="w3-bar-item w3-dropdown-hover" style="width: 60px;" href="?action=user">
-					<a href="?action=user"><img style="width: 100%;" src="<?php echo $user["Avatar"]; ?>" alt="<?php echo $user["Account"]; ?>"></a>
+				<div class="w3-bar-item w3-dropdown-hover" style="max-width: 90px;" href="?action=user">
+					<a href="?action=user"><img style="width: 100%; max-height: 35px;" src="<?php echo $user["Avatar"]; ?>" alt="<?php echo $user["Account"]; ?>"></a>
 					<div class="w3-dropdown-content w3-bar-block w3-gray" style="margin-left: -100px;">
 						<a class="w3-bar-item w3-button" href="?action=user">Trang cá nhân</a>
 						<a class="w3-bar-item w3-button" href="?action=logout">Đăng xuất</a>

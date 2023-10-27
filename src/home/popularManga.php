@@ -21,9 +21,9 @@
 		<div class="w3-margin-top">
 			<div class="mySlides w3-row">
 				<a href="#" class="w3-col w3-mobile w3-center" style="width: 30%;"><img style="width: 70%;" src="image/imgServer/mangaPopular/aharen-san-wa-hakarenai-9368.jpg" alt="#"></a>
-				<table class="w3-col w3-mobile" style="width: 70%;">
+				<table class="w3-table w3-col w3-mobile" style="width: 70%;">
 					<tr>
-						<td>Name</td>
+						<td style="width: 150px">Name</td>
 						<td>AHAREN-SAN WA HAKARENAI</td>
 					</tr>
 					<tr>
@@ -42,9 +42,9 @@
 			</div>
 			<div class="mySlides w3-row">
 				<a href="#" class="w3-col w3-mobile w3-center" style="width: 30%;"><img style="width: 70%;" src="image/imgServer/mangaPopular/naruto.jpg" alt="#"></a>
-				<table class="w3-col w3-mobile w3-right" style="width: 70%;">
+				<table class="w3-table w3-col w3-mobile w3-right" style="width: 70%;">
 					<tr>
-						<td>Name</td>
+						<td style="width: 150px">Name</td>
 						<td>Naruto - Cửu Vĩ Hồ Ly</td>
 					</tr>
 					<tr>
@@ -63,9 +63,9 @@
 			</div>
 			<div class="mySlides w3-row">
 				<a href="#" class="w3-col w3-mobile w3-center" style="width: 30%;"><img style="width: 70%;" src="image/imgServer/mangaPopular/jujutsu-kaisen-chu-thuat-hoi-chien.jpg" alt="#"></a>
-				<table class="w3-col w3-mobile w3-right" style="width: 70%;">
+				<table class="w3-table w3-col w3-mobile w3-right" style="width: 70%;">
 					<tr>
-						<td>Name</td>
+						<td style="width: 150px">Name</td>
 						<td>JUJUTSU KAISEN - CHÚ THUẬT HỒI CHIẾN</td>
 					</tr>
 					<tr>

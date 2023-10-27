@@ -22,9 +22,9 @@ function showErrorBox($text){
 	<?php
 }
 
-function showMessageBox($text){
+function showMessageBox($link, $text){
 	?>
-	<a id="errorBox" href="#form" onclick="document.getElementById('errorBox').style.display = 'none';">
+	<a id="errorBox" href="#form" onclick="document.getElementById('errorBox').style.display = 'none'; window.location.href = '<?php echo $_SESSION['baseURL'] ?>?action=<?php echo $link; ?>#form';">
 		<div class="w3-display-container w3-opacity w3-black" style="width: 100%; height: 100%;">
 		</div>
 		<div class="w3-display-middle w3-center" style="width: 30%;">
@@ -79,6 +79,22 @@ function updateNameUser($id, $name) {
 		$database = DATABASE::connect();
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":name", $name);
+		$cmd->bindValue(":id", $id);
+		$result = $cmd->execute();
+		return $result;
+	} catch(PDOException $e){
+		$error_message = $e->getMessage();
+		echo "<p>Error query: $error_message</p>";
+		exit();
+	}
+}
+
+function updateAvatarUser($id, $avatar) {
+	try{
+		$sql = "UPDATE users SET Avatar = :avatar WHERE Id = :id";
+		$database = DATABASE::connect();
+		$cmd = $database->prepare($sql);
+		$cmd->bindValue(":avatar", $avatar);
 		$cmd->bindValue(":id", $id);
 		$result = $cmd->execute();
 		return $result;

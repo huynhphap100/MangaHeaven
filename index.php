@@ -16,6 +16,7 @@
 <body>
 	<?php
 		session_start();
+		$_SESSION['baseURL'] = $_SERVER['REQUEST_URI'];
 		require("src/model/database.php");
 		require("src/model/function.php");
 		include("src/main.php");
