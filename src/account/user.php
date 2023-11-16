@@ -1,163 +1,101 @@
-<?php
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		if(isset($_REQUEST['group']) && $_REQUEST['group'] == "password"){
-			$messageArray = array(
-		    	"oldpassword" => "Chưa nhập mật khẩu cũ kìa.",
-		    	"newpassword" => "Chưa nhập mật khẩu mới kìa.",
-		    	"newpassword2" => "Chưa nhập nhập lại mật khẩu mới kìa."
-		    );
-
-		    foreach ($messageArray as $key => $value) {
-		    	if (empty($_POST[$key])) {
-					$error = $value;
-					break;
-				}
-		    }
-
-		    if(!isset($error) || $error == null){
-			    $oldpassword = fixInput($_POST["oldpassword"]);
-			    $newpassword = fixInput($_POST["newpassword"]);
-			    $newpassword2 = fixInput($_POST["newpassword2"]);
-
-			    if(strlen($oldpassword) < 10){
-			    	$error = "Mật khẩu cũ không được nhỏ hơn 10 ký tự.";
-			    } else if(strlen($newpassword) < 10){
-			    	$error = "Mật khẩu mới không được nhỏ hơn 10 ký tự.";
-			    } else if(strlen($newpassword2) < 10){
-			    	$error = "Mật khẩu nhập lại không được nhỏ hơn 10 ký tự.";
-			    } else if($user["Password"] != md5($oldpassword)){
-			    	$error = "Mật khẩu cũ không chính xác.";
-			    } else if ($newpassword != $newpassword2){
-			    	$error = "Mật khẩu nhập lại không chính xác.";
-			    }
-
-			    if(!isset($error) || $error == null){
-			    	$update = updatePasswordUser($user["Id"], $newpassword);
-			    	if($update){
-			    		$_SESSION['user'] = getUserByAccount($user["Account"]);
-			    		$user = $_SESSION['user'];
-			    		$message = "Cập nhật thành công!";
-			    	} else {
-			    		$error = "Cập nhật thất bại!";
-			    	}
-			    }
-			}
-		} else if (isset($_REQUEST['group']) && $_REQUEST['group'] == "info"){
-			$error = "";
-			$message = "";
-			if(!empty($_FILES['uploadAvatar']['name'])){
-				$target_file = "image/imgServer/account/".$user["Id"].".jpg";
-				if(!getimagesize($_FILES["uploadAvatar"]["tmp_name"])){
-					$error .= "Hong có nhận ra ảnh, lấy cái khác đi.";
-				} else {
-					if(file_exists($target_file)){
-						unlink($target_file);
-					}
-					if(move_uploaded_file($_FILES["uploadAvatar"]["tmp_name"], $target_file)){
-						$update = updateAvatarUser($user["Id"], $target_file);
-			    		$_SESSION['user'] = getUserByAccount($user["Account"]);
-			    		$user = $_SESSION['user'];
-						$message .= "Chỉnh ảnh thành công! ";
-					} else {
-						$error .= "Chuyển ảnh sang máy chủ gặp lỗi. ";
-					}
-				}
-			}
-			if (empty($_POST['name'])){
-				$error .= "Chưa nhập tên kìa.";
-			} else {
-				$name = fixInput($_POST["name"]);
-				if($name != $user["Name"]){
-					$update = updateNameUser($user["Id"], $name);
-			    	if($update){
-			    		$_SESSION['user'] = getUserByAccount($user["Account"]);
-			    		$user = $_SESSION['user'];
-			    		$message .= "Sửa tên thành công! ";
-			    	} else {
-			    		$error .= "Cập nhật thất bại!";
-			    	}
-			    }
-			}
-		}
-	}
-?>
-<div class="w3-display-container" style="width: 100%; height: 1200px; min-width: 500px; background-image: url('image/imgOrigin/wp2758170.gif'); background-size: cover;">
+<div class="w3-display-container" style="width: 100%; height: 1200px; min-width: 600px; background-image: url('image/imgOrigin/wp2758170.gif'); background-size: cover;">
 	<div id="form" class="w3-display-middle w3-row-padding w3-padding w3-black" style="width: 80%; opacity: 70%;">
 		<div class="w3-quarter">
 			<p class="w3-bar w3-container w3-leftbar w3-rightbar w3-border-red" style="font-size: 20px; font-weight: bold;">Tài khoản</p>
-			<a class="w3-container w3-button" style="margin: 8px 16px 8px 16px;" href="?action=user&group=info#form">Thông tin tài khoản</a>
-			<a class="w3-container w3-button" style="margin: 8px 16px 8px 16px;" href="?action=user&group=password#form">Quản lý mật khẩu</a>
+			<div style="margin: 16px 0px;"><a style="margin: 8px 8px; padding: 0; max-width: calc(100% - 16px); text-decoration: none;" href="?action=user&group=info#form">&#129456; Thông tin tài khoản</a></div>
+			<div style="margin: 16px 0px;"><a style="margin: 8px 8px; padding: 0; max-width: calc(100% - 16px); text-decoration: none;" href="?action=user&group=password#form">&#128477; Quản lý mật khẩu</a></div>
 			<p class="w3-bar w3-container w3-leftbar w3-rightbar w3-border-red" style="font-size: 20px; font-weight: bold;">Truyện tranh</p>
-			<a class="w3-container w3-button" style="margin: 8px 16px 8px 16px;">Truyện đã đăng</a>
-			<a class="w3-container w3-button" style="margin: 8px 16px 8px 16px;">Đăng thêm truyện</a>
+			<div style="margin: 16px 0px;"><a style="margin: 8px 8px; padding: 0; max-width: calc(100% - 16px); text-decoration: none;" href="?action=user&group=manga#form">&#128218; Truyện đã đăng</a></div>
+			<div style="margin: 16px 0px;"><a style="margin: 8px 8px; padding: 0; max-width: calc(100% - 16px); text-decoration: none;" href="?action=user&group=addmanga#form">&#128393; Đăng truyện mới</a></div>
 			<p class="w3-bar w3-container w3-leftbar w3-rightbar w3-border-red" style="font-size: 20px; font-weight: bold;">Đăng xuất</p>
-			<a class="w3-container w3-button" style="margin: 8px 16px 8px 16px;" href="?action=logout">Đăng xuất</a>
+			<div style="margin: 16px 0px;"><a style="margin: 8px 8px; padding: 0; max-width: calc(100% - 16px); text-decoration: none;" href="?action=logout">&#9940; Đăng xuất</a></div>
 		</div>
 		<div class="w3-threequarter">
 			<?php
 			$group = (isset($_REQUEST['group'])) ? $_REQUEST['group'] : "null";
-			switch ($group) {
-				case 'password':
-					?>
-					<p class="w3-bar w3-container" style="font-size: 20px; font-weight: bold;">Quản lý mật khẩu</p>
-					<form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>?action=user&group=password#form">
-						<table class="w3-table">
-							<tr>
-								<td>Mật khẩu cũ</td>
-								<td><input class="w3-black w3-border-0 w3-border-left w3-border-bottom" type="password" name="oldpassword" placeholder="Mật khẩu cũ" value="<?php echo isset($_POST['oldpassword']) ? htmlspecialchars($_POST['oldpassword']) : ''; ?>"></td>
-							</tr>
-							<tr>
-								<td>Mật khẩu mới</td>
-								<td><input class="w3-black w3-border-0 w3-border-left w3-border-bottom" type="password" name="newpassword" placeholder="Mật khẩu mới" value="<?php echo isset($_POST['newpassword']) ? htmlspecialchars($_POST['newpassword']) : ''; ?>"></td>
-							</tr>
-							<tr>
-								<td>Nhập lại mật khẩu mới</td>
-								<td><input class="w3-black w3-border-0 w3-border-left w3-border-bottom" type="password" name="newpassword2" placeholder="Nhập lại mật khẩu mới" value="<?php echo isset($_POST['newpassword2']) ? htmlspecialchars($_POST['newpassword2']) : ''; ?>"></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td><button>Xác nhận</button></td>
-							</tr>
-						</table>
-					</form>
-					<?php
+
+			if(!isset($_SESSION['user'])){
+				header("Location: ../WebDocTruyen");
+			}
+
+			switch($group){
+				case "password":
+					include "user_password.php";
+					break;
+				case "addmanga":
+					include "user_addmanga.php";
+					break;
+				case "addchapter":
+					if(!isset($_REQUEST['id'])){
+						header("Location: ../WebDocTruyen?action=user");
+						break;
+					}
+					$mangaByUser = getMangaByUser($user['Id']);
+					$check = 0;
+					foreach($mangaByUser as $manga){
+						if($manga["Id_manga"] == $_REQUEST['id']){
+							$check = 1;
+						}
+					}
+					if($check == 0){
+						header("Location: ../WebDocTruyen");
+						break;
+					}
+
+					$missingChapter = getMissingChapterManga($_REQUEST['id']);
+					$manga = getMangaById($_REQUEST['id']);
+
+					include "user_addchapter.php";
+					break;
+				case "editmanga":
+					if(!isset($_REQUEST['id'])){
+						header("Location: ?action=user");
+						break;
+					}
+					$mangaByUser = getMangaByUser($user['Id']);
+					$check = 0;
+					foreach($mangaByUser as $manga){
+						if($manga["Id_manga"] == $_REQUEST['id']){
+							$check = 1;
+						}
+					}
+					if($check == 0){
+						header("Location: ../WebDocTruyen");
+						break;
+					}
+					
+					$manga = getMangaById($_REQUEST['id']);
+					$categories2 = getCategoriesByIdManga($_REQUEST['id']);
+					include "user_editmanga.php";
+					break;
+				case "removemanga":
+					if(!isset($_REQUEST['id'])){
+						header("Location: ../WebDocTruyen");
+						break;
+					}
+					$mangaByUser = getMangaByUser($user['Id']);
+					$check = 0;
+					foreach($mangaByUser as $manga){
+						if($manga["Id_manga"] == $_REQUEST['id']){
+							$check = 1;
+						}
+					}
+					if($check == 0){
+						header("Location: ../WebDocTruyen");
+						break;
+					}
+					
+					$manga = getMangaById($_REQUEST['id']);
+					include "user_removemanga.php";
+					break;
+				case "manga":
+					include "user_manga.php";
 					break;
 				default:
-					?>
-					<p class="w3-bar w3-container" style="font-size: 20px; font-weight: bold;">Thông tin tài khoản</p>
-					<table class="w3-table">
-						<form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>?action=user&group=info#form" enctype="multipart/form-data">
-						<tr>
-							<td style="width: 30%;">Ảnh đại diện</td>
-							<td style="width: 20%; max-height: 200px;">
-								<img style="width: 100%; background-size: cover;" src="<?php echo $user["Avatar"]; ?>" alt="<?php echo $user["Account"]; ?>">
-								<input type="file" name="uploadAvatar">
-							</td>
-						</tr>
-						<tr>
-							<td>ID tài khoản</td>
-							<td class="w3-text-red"><b><?php echo $user["Id"]; ?></b></td>
-						</tr>
-						<tr>
-							<td>Tên tài khoản</td>
-							<td><input class="w3-black w3-border-0 w3-border-left w3-border-bottom" type="text" name="name" placeholder="Tên hiển thị" value="<?php echo $user["Name"]; ?>"></td>
-						</tr>
-						<tr>
-							<td>Nhóm tài khoản</td>
-							<td><?php echo $user["Permission"]; ?></td>
-						</tr>
-						<tr>
-							<td>Ngày tham gia</td>
-							<td><?php echo $user["AccountDate"]; ?></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td><button class="w3-white" style="padding-left: 20px; padding-right: 20px">Sửa</button></td>
-						</tr>
-					</table>
-					<?php
+					include "user_info.php";
 					break;
-			} ?>
+			}
+			?>
 		</div>
 	</div>
 	<?php 
