@@ -37,8 +37,8 @@
 <div class="listmanga w3-margin w3-row-padding">
 	<?php $mangas = getMangas();
 	foreach ($mangas as $manga) { ?>
-		<div class="manga w3-col">
-			<div class="" style="width: 95%; height: 300px; overflow: hidden; position: relative;">
+		<div class="manga w3-col w3-card">
+			<div class="w3-hover-opacity" style="width: 95%; height: 300px; overflow: hidden; position: relative;">
 				<a href="?action=manga&id=<?php echo $manga["Id"] ?>">
 					<img style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" src="<?php echo $manga["Image"] ?>" alt="<?php echo $manga["Name"] ?>">
 				</a>

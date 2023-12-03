@@ -1,6 +1,7 @@
 <?php
-	$dir_manga = "manga/".$manga["Name"];
+	$manga = getMangaById($_REQUEST['id']);
+	$dir_manga = "manga/".$manga["Name"]."/Chap".$_REQUEST['idchap'];
 	deleteFolder($dir_manga);
-	deleteManga($manga['Id']);
+	deleteChapter($_REQUEST['id'], $_REQUEST['idchap']);
 	header("Location: ?action=user&group=manga");
 ?>

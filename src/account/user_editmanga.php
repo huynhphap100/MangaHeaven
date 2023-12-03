@@ -1,57 +1,9 @@
-<?php
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		$error = null;
-		$messageArray = array(
-	    	"name" => "Chưa nhập tên truyện kìa.",
-	    );
-
-	    foreach ($messageArray as $key => $value) {
-	    	if (empty($_POST[$key])) {
-				$error = $value;
-				break;
-			}
-	    }
-
-	    if(!isset($error) || $error == null){
-		    $name = fixInput($_POST["name"]);
-		    $nameOld = fixInput($_POST["nameOld"]);
-		    $pathImageOld = fixInput($_POST["pathImageOld"]);
-		    $description = (!empty($_POST["description"])) ? fixInput($_POST["description"]) : null;
-		    $categories = (isset($_POST['categories'])) ? $_POST['categories'] : array();
-		    $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
-
-		    if(!isset($error) || $error == null){
-
-		    	$dir_old = "manga/".$nameOld;
-		    	$dir_manga = "manga/".$name;
-		    	if(is_dir($dir_old)) rename($dir_old, $dir_manga);
-		    	if(!is_dir($dir_manga)) mkdir($dir_manga, 0777, true);
-
-		    	$dir_image = null;
-		    	if(!empty($_FILES['uploadImage']['name'])){
-		    		if(file_exists($pathImageOld)) unlink($pathImageOld);
-		    		$dir_image = $dir_manga."/".$_FILES['uploadImage']['name'];
-		    		if(!move_uploaded_file($_FILES['uploadImage']['tmp_name'], $dir_image)){
-		    			$error = "Cập nhật ảnh thất bại! ";
-		    		}
-		    	} else {
-		   			$nameImageOld = explode("/", $pathImageOld);
-		    		$dir_image = $dir_manga."/".end($nameImageOld);
-		    	}
-
-		    	$insert = updateManga($_REQUEST['id'], $name, $dir_image, $description, $status, $categories, $user["Id"]);
-		    	if($insert){
-		    		$message = "Sửa truyện thành công!";
-		    		header("Location: ?action=user&group=manga#form");
-		    	} else {
-		    		$error .= "Sửa truyện thất bại!";
-		    	}
-		    }
-		}
-	}
-?>
+<head>
+	<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+</head>
 <p class="w3-bar w3-container" style="font-size: 20px; font-weight: bold;">Sửa truyện</p>
-<form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>?action=user&group=editmanga&id=<?php echo $manga['Id']; ?>#form" enctype="multipart/form-data">
+<form id="formHandle" method="post" action="src/account/handle/editmanga.php" enctype="multipart/form-data">
+	<input type="hidden" name="id" value="<?php echo $manga['Id']; ?>">
 	<input type="hidden" name="nameOld" value="<?php echo $manga['Name']; ?>">
 	<input type="hidden" name="pathImageOld" value="<?php echo $manga['Image']; ?>">
 	<table class="w3-table">
@@ -76,7 +28,10 @@
 					foreach($categories2 as $c2){
 						if($c['Id'] == $c2['Id']){ ?>
 							<div class="w3-quarter">
-								<input type="checkbox" name="categories[]" value="<?php echo $c["Id"]; ?>" checked/><?php echo $c["Name"]; ?>
+								<div class="w3-cell">
+									<input type="checkbox" name="categories[]" value="<?php echo $c["Id"]; ?>" checked/>
+								</div>
+								<p class="w3-cell"><?php echo $c["Name"]; ?></p>
 							</div>
 						<?php $check = 1;
 						break;
@@ -84,7 +39,10 @@
 					}
 					if($check == 0){ ?>
 						<div class="w3-quarter">
-							<input type="checkbox" name="categories[]" value="<?php echo $c["Id"]; ?>" /><?php echo $c["Name"]; ?>
+							<div class="w3-cell">
+								<input type="checkbox" name="categories[]" value="<?php echo $c["Id"]; ?>" />
+							</div>
+							<p class="w3-cell"><?php echo $c["Name"]; ?></p>
 						</div>
 					<?php }
 				} ?>
@@ -106,11 +64,31 @@
 		</tr>
 		<tr>
 			<td>Mô tả</td>
-			<td><textarea id="editor" class="ck-content w3-border-0 w3-border-left w3-border-bottom" type="text" name="description" placeholder="Mô tả"rows="4" cols="50" style="background-color: black; color: white;"><?php echo $manga['Description']; ?></textarea></td>
+			<td><textarea id="editor" onchange="changeEditor(event)" class="ck-content w3-border-0 w3-border-left w3-border-bottom" type="text" name="description" placeholder="Mô tả"rows="4" cols="50" style="background-color: black; color: white;"><?php echo $manga['Description']; ?></textarea></td>
 		</tr>
 		<tr>
 			<td><a href="?action=user&group=manga" class="w3-white w3-button" style="padding-left: 20px; padding-right: 20px">Huỷ</a></td>
-			<td><button class="w3-white w3-button" style="padding-left: 20px; padding-right: 20px">Xác nhận</button></td>
+			<td><button id="submit" class="w3-white w3-button" style="padding-left: 20px; padding-right: 20px">Xác nhận</button></td>
 		</tr>
 	</table>
 </form>
+
+<script>
+
+CKEDITOR.replace('editor');
+function changeEditor(event) {
+		CKEDITOR.instances['editor'].updateElement();
+	    var editorContent = CKEDITOR.instances['editor'].getData();
+	    console.log("Editor Content: ", editorContent);
+}
+SubmitForm("formHandle", "submit",
+	function(response) {
+        if(response.type == "success"){
+        	showBox(`<h3 class='w3-text-green'>Thành công</h3>`, `<p>${response.message}</p>`);
+        	setTimeout(() => window.location.href = "?action=user&group=manga", 1000);
+        } 
+        if(response.type == "error") showBox(`<h3 class='w3-text-red'>Bị lỗi rồi</h3>`, `<p>${response.message}</p>`);
+	}
+);
+
+</script>

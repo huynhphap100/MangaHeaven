@@ -110,8 +110,8 @@
 	<div class="w3-border w3-border-white w3-margin w3-padding" style="width: 70%;">
 		<h2 class="w3-text-blue w3-bar w3-border-bottom w3-border-white"><i class="bi bi-card-list w3-xxlarge"></i> Danh sách chương</h2>
 		<?php foreach($chapters as $chap){ ?>
-			<div>
-				<a href="?action=readManga&id=<?php echo $chap["Id_manga"]; ?>&chap=<?php echo $chap["Chap"] ?>">Tập <?php echo $chap["Chap"]; ?>: <?php echo $chap["Name"]; ?></a>
+			<div style="width: 100%;">
+				<a class="w3-button w3-hover-none w3-bar w3-hover-opacity w3-hover-gray w3-hover-text-white" href="?action=readManga&id=<?php echo $chap["Id_manga"]; ?>&chap=<?php echo $chap["Chap"] ?>">Tập <?php echo $chap["Chap"]; ?>: <?php echo $chap["Name"]; ?></a>
 			</div>
 		<?php } ?>
 	</div>

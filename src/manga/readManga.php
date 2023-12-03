@@ -38,7 +38,7 @@
 				<!-- <p class="w3-button w3-white w3-hover-white w3-margin w3-card-2">Chọn tập</p> -->
 				<select name="color" class="w3-button w3-hover-none w3-hover-text-gray w3-border w3-boder-white" style="margin: 0px 10px 0px 10px;">
 					<?php foreach($chapters as $chap2){ ?>
-						<option value="<?php echo $chap2["Chap"]; ?>"><a href="?action=readManga&id=<?php echo $manga["Id"]; ?>&chap=<?php echo $chap2["Chap"]; ?>" class="w3-bar-item w3-button">Tập <?php echo $chap["Chap"]; ?>: <?php echo $chap["Name"]; ?></a></option>
+						<option value="<?php echo $chap2["Chap"]; ?>"><a href="?action=readManga&id=<?php echo $manga["Id"]; ?>&chap=<?php echo $chap2["Chap"]; ?>" class="w3-bar-item w3-button">Tập <?php echo $chap2["Chap"]; ?>: <?php echo $chap2["Name"]; ?></a></option>
 					<?php } ?>
 				</select>
 				<!-- <div class="w3-dropdown-content w3-bar-block w3-border" style="overflow: auto; max-height: 200px;">
@@ -69,7 +69,7 @@
 			<p class="w3-button w3-bar-item w3-white w3-hover-white w3-margin w3-card-2">Chọn chap</p>
 			<div class="w3-dropdown-content w3-bar-block w3-border" style="overflow: auto; max-height: 200px;">
 			    <?php foreach($chapters as $chap2){ ?>
-			    	<a href="?action=readManga&id=<?php echo $manga["Id"]; ?>&chap=<?php echo $chap2["Chap"]; ?>" class="w3-bar-item w3-button">Tập <?php echo $chap["Chap"]; ?>: <?php echo $chap["Name"]; ?></a>
+			    	<a href="?action=readManga&id=<?php echo $manga["Id"]; ?>&chap=<?php echo $chap2["Chap"]; ?>" class="w3-bar-item w3-button">Tập <?php echo $chap2["Chap"]; ?>: <?php echo $chap2["Name"]; ?></a>
 				<?php } ?>
 			</div>
 		</div>

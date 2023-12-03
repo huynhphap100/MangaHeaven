@@ -58,7 +58,7 @@ function deleteFolder($folderPath) {
 
 function insertUser($account, $password, $email, $name) {
 	try{
-		$sql = "INSERT INTO users (Account, Password, Email, Permission, Avata, Name, AccountDate) VALUES (:account, :password, :email, :member, :image, :name, :dat)";
+		$sql = "INSERT INTO users (Account, Password, Email, Permission, Avatar, Name, AccountDate) VALUES (:account, :password, :email, :member, :image, :name, :dat)";
 		$database = DATABASE::connect();
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":account", $account);
@@ -339,8 +339,22 @@ function deleteManga($id_manga){
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":id", $id_manga);
 		$cmd->execute();
+	} catch(PDOException $e){
+		$error_message = $e->getMessage();
+		echo "<p>Error query: $error_message</p>";
+		exit();
+	}
+}
 
-		return $row;
+function deleteChapter($id_manga, $chap){
+	try{
+		$database = DATABASE::connect();
+
+		$sql = "DELETE FROM chapter WHERE Id_manga=:id_manga AND Chap=:chap";
+		$cmd = $database->prepare($sql);
+		$cmd->bindValue(":id_manga", $id_manga);
+		$cmd->bindValue(":chap", $chap);
+		return  $cmd->execute();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";

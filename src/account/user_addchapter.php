@@ -1,62 +1,8 @@
-<?php
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		$error = "";
-		$messageArray = array(
-	    	"chap" => "Chưa nhập tập kìa.",
-	    );
-
-	    foreach ($messageArray as $key => $value) {
-	    	if (empty($_POST[$key])) {
-				$error = $value;
-				break;
-			}
-	    }
-
-	    if(!isset($error) || $error == null){
-		    $chap = fixInput($_POST["chap"]);
-		    $name = fixInput($_POST["name"]);
-		    $description = (!empty($_POST["description"])) ? fixInput($_POST["description"]) : null;
-		    $categories = (isset($_POST['categories'])) ? $_POST['categories'] : array();
-		    $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
-
-		    if (!is_numeric($chap)) {
-		    	$error = "Hãy nhập chap là số.";
-		    } else if(getChapterByIdManga($chap, $_REQUEST['id'])){
-		    	$error = "Tập này đã tồn tại, hãy chọn tập khác.";
-		    }
-
-		    if(!isset($error) || $error == null){
-
-		    	$uploadedFiles = $_FILES["uploadImages"];
-		    	$dir_manga = "manga/".$manga['Name']."/Chap".$chap;
-		    	if(!is_dir($dir_manga)) mkdir($dir_manga, 0777, true);
-
-		    	$dir_image = null;
-		    	$i = 0;
-		    	foreach ($uploadedFiles["name"] as $key => $filename) {
-		    		$i++;
-		    		$dir_image = $dir_manga."/".$i.".png";
-		    		if(!move_uploaded_file($uploadedFiles["tmp_name"][$key], $dir_image)){
-		    			$error = "Cập nhật ảnh thất bại ở ảnh".basename($filename)."! ";
-		    			deleteFolder($dir_manga);
-		    			break;
-		    		}
-		    	}
-		    	
-		    	if(!isset($error) || $error == null) {
-			    	$insert = addChapterManga($_REQUEST['id'], $name, $chap);
-			    	if($insert){
-			    		$message = "Thêm tập thành công!";
-			    	} else {
-			    		$error .= "Thêm tập thất bại!";
-			    	}
-			    }
-		    }
-		}
-	}
-?>
+global$manga;
 <p class="w3-bar w3-container" style="font-size: 20px; font-weight: bold;">Thêm tập mới</p>
-<form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>?action=user&group=addchapter&id=<?php echo $_REQUEST['id'] ?>#form" enctype="multipart/form-data">
+<form id="formHandle" method="post" action="src/account/handle/addchapter.php" enctype="multipart/form-data">
+	<input type="hidden" name="idManga" value="<?php echo $manga['Id']; ?>">
+	<input type="hidden" name="nameManga" value="<?php echo $manga['Name']; ?>">
 	<table class="w3-table">
 		<tr>
 			<td style="width: 30%;">Tập: </td>
@@ -72,7 +18,19 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><button class="w3-white" style="padding-left: 20px; padding-right: 20px">Đăng truyện</button></td>
+			<td><button id="submit" class="w3-white" style="padding-left: 20px; padding-right: 20px">Đăng truyện</button></td>
 		</tr>
 	</table>
 </form>
+<script>
+SubmitForm("formHandle", "submit",
+	function(response) {
+        if(response.type === "success"){
+        	showBox(`<h3 class='w3-text-green'>Thành công</h3>`, `<p>${response.message}</p>`);
+        	setInterval(() => location.reload(), 1000);
+        } 
+        if(response.type === "error") showBox(`<h3 class='w3-text-red'>Bị lỗi rồi</h3>`, `<p>${response.message}</p>`);
+	}
+);
+
+</script>

@@ -20,6 +20,7 @@
 				header("Location: ../WebDocTruyen");
 				break;
 			}
+
 			$id = $user['Id'];
 			include "account/user.php";
 			break;
@@ -28,13 +29,14 @@
 				header("Location: ../WebDocTruyen");
 				break;
 			}
-			updateViewManga($_REQUEST['id']);
-			$manga = getMangaById($_REQUEST['id']);
-			$chapters = getChaptersManga($_REQUEST['id']);
-			$userManga = getUserManga($_REQUEST['id']);
-			$categories = getCategoriesByIdManga($_REQUEST['id']);
-			$amountLike = getLikeManga($_REQUEST['id']);
-			$amountFollow = getFollowManga($_REQUEST['id']);
+			$id = $_REQUEST['id'];
+			updateViewManga($id);
+			$manga = getMangaById($id);
+			$chapters = getChaptersManga($id);
+			$userManga = getUserManga($id);
+			$categories = getCategoriesByIdManga($id);
+			$amountLike = getLikeManga($id);
+			$amountFollow = getFollowManga($id);
 			include "manga/infoManga.php";
 			break;
 		case "readManga":
@@ -45,9 +47,10 @@
 				header("Location: ../WebDocTruyen");
 				break;
 			}
-			$manga = getMangaById($_REQUEST['id']);
-			$chapters = getChaptersManga($_REQUEST['id']);
-			$chap = getChapterByIdManga($_REQUEST['chap'], $_REQUEST['id']);
+			$id = $_REQUEST['id'];
+			$manga = getMangaById($id);
+			$chapters = getChaptersManga($id);
+			$chap = getChapterByIdManga($_REQUEST['chap'], $id);
 			include "manga/readManga.php";
 			break;
 		default:
