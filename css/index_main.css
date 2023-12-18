@@ -1,0 +1,36 @@
+:root {
+    --white: rgb(221, 221, 221);
+    --dark: rgb(25, 42, 53);
+}
+
+body {
+    background-color: var(--dark);
+    color: var(--white);
+}
+
+#LoadingBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
+
+#Loading {
+    border: 8px solid transparent;
+    border-top-color: #3498db; /* Màu của border, có thể thay đổi */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

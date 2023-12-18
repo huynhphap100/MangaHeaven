@@ -15,7 +15,7 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><button id="submit">Xác nhận</button></td>
+			<td><button id="submit" class="w3-white w3-hover-white w3-hover-opacity w3-btn w3-round-large">Xác nhận</button></td>
 		</tr>
 	</table>
 </form>
@@ -23,11 +23,11 @@
 
 SubmitForm("formHandle", "submit",
 	function(response) {
-        if(response.type == "success"){
+        if(response.type === "success"){
         	showBox(`<h3 class='w3-text-green'>Thành công</h3>`, `<p>${response.message}</p>`);
         	setInterval(() => location.reload(), 1000);
         } 
-        if(response.type == "error") showBox(`<h3 class='w3-text-red'>Bị lỗi rồi</h3>`, `<p>${response.message}</p>`);
+        if(response.type === "error") showBox(`<h3 class='w3-text-red'>Bị lỗi rồi</h3>`, `<p>${response.message}</p>`);
 	}
 );
 

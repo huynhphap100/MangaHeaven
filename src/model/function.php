@@ -3,37 +3,7 @@
 function fixInput($data) {
     $data = trim($data);
     $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
-
-function showErrorBox($text){
-	?>
-	<a id="errorBox" href="#form" onclick="document.getElementById('errorBox').style.display = 'none';">
-		<div class="w3-display-container w3-opacity w3-black" style="width: 100%; height: 100%;">
-		</div>
-		<div class="w3-display-middle w3-center" style="width: 30%;">
-			<div class=" w3-animate-top w3-white w3-border-black w3-border w3-container">
-				<h3 class="w3-text-red">Có lỗi xãy ra</h3>
-				<p>Lỗi: <?php echo $text; ?></p>
-			</div>
-		</div>
-	</a>
-	<?php
-}
-
-function showMessageBox($link, $text){
-	?>
-	<a id="errorBox" href="#form" onclick="document.getElementById('errorBox').style.display = 'none'; window.location.href = '<?php echo $_SESSION['baseURL'] ?>?action=<?php echo $link; ?>#form';">
-		<div class="w3-display-container w3-opacity w3-black" style="width: 100%; height: 100%;">
-		</div>
-		<div class="w3-display-middle w3-center" style="width: 30%;">
-			<div class=" w3-animate-top w3-white w3-border-black w3-border w3-container">
-				<p class="w3-yellow"><?php echo $text; ?></p>
-			</div>
-		</div>
-	</a>
-	<?php
+    return htmlspecialchars($data);
 }
 
 function deleteFolder($folderPath) {
@@ -68,8 +38,7 @@ function insertUser($account, $password, $email, $name) {
 		$cmd->bindValue(":image", 'image/imgOrigin/Logo.gif');
 		$cmd->bindValue(":name", $name);
 		$cmd->bindValue(":dat", date('Y-m-d'));
-		$result = $cmd->execute();
-		return $result;
+        return $cmd->execute();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -84,8 +53,7 @@ function updatePasswordUser($id, $password) {
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":password", md5($password));
 		$cmd->bindValue(":id", $id);
-		$result = $cmd->execute();
-		return $result;
+        return $cmd->execute();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -100,8 +68,7 @@ function updateNameUser($id, $name) {
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":name", $name);
 		$cmd->bindValue(":id", $id);
-		$result = $cmd->execute();
-		return $result;
+        return $cmd->execute();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -116,8 +83,7 @@ function updateAvatarUser($id, $avatar) {
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":avatar", $avatar);
 		$cmd->bindValue(":id", $id);
-		$result = $cmd->execute();
-		return $result;
+        return $cmd->execute();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -132,13 +98,27 @@ function getUserByAccount($account){
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":account",$account);
 		$cmd->execute();
-		$result = $cmd->fetch();
-		return $result;
+        return $cmd->fetch();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
 		exit();
 	}
+}
+
+function getUserIsLocked($account){
+    try{
+        $sql = "SELECT * FROM users where account = :account AND LockUser = 1";
+        $database = DATABASE::connect();
+        $cmd = $database->prepare($sql);
+        $cmd->bindValue(":account",$account);
+        $cmd->execute();
+        return $cmd->fetch();
+    } catch(PDOException $e){
+        $error_message = $e->getMessage();
+        echo "<p>Error query: $error_message</p>";
+        exit();
+    }
 }
 
 function getCategories(){
@@ -147,8 +127,7 @@ function getCategories(){
 		$database = DATABASE::connect();
 		$cmd = $database->prepare($sql);
 		$cmd->execute();
-		$result = $cmd->fetchAll();
-		return $result;
+        return $cmd->fetchAll();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -163,8 +142,7 @@ function getCategoriesByIdManga($id_manga){
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":id_manga",$id_manga);
 		$cmd->execute();
-		$result = $cmd->fetchAll();
-		return $result;
+        return $cmd->fetchAll();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -172,19 +150,66 @@ function getCategoriesByIdManga($id_manga){
 	}
 }
 
+function getMangasTop($limit){
+    try {
+        $sql = "SELECT * FROM manga ORDER BY View DESC LIMIT " . (int)$limit;
+        $database = DATABASE::connect();
+        $cmd = $database->prepare($sql);
+        $cmd->execute();
+        return $cmd->fetchAll();
+    } catch (PDOException $e) {
+        $error_message = $e->getMessage();
+        echo "<p>Error query: $error_message</p>";
+        exit();
+    }
+}
+
+
 function getMangas(){
 	try{
 		$sql = "SELECT * FROM manga";
 		$database = DATABASE::connect();
 		$cmd = $database->prepare($sql);
 		$cmd->execute();
-		$result = $cmd->fetchAll();
-		return $result;
+        return $cmd->fetchAll();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
 		exit();
 	}
+}
+
+function getMangaByCategoryId($id){
+    try{
+        $sql = "SELECT * FROM manga, manga_category 
+            WHERE manga.Id = manga_category.Id_manga 
+            AND Id_category = :id";
+        $database = DATABASE::connect();
+        $cmd = $database->prepare($sql);
+        $cmd->bindValue(":id",$id);
+        $cmd->execute();
+        return $cmd->fetchAll();
+    } catch(PDOException $e){
+        $error_message = $e->getMessage();
+        echo "<p>Error query: $error_message</p>";
+        exit();
+    }
+}
+
+function getMangaBySearch($search){
+    try{
+        $sql = "SELECT * FROM manga WHERE Name LIKE :name OR Description LIKE :des";
+        $database = DATABASE::connect();
+        $cmd = $database->prepare($sql);
+        $cmd->bindValue(":name", '%' . $search . '%');
+        $cmd->bindValue(":des", '%' . $search . '%');
+        $cmd->execute();
+        return $cmd->fetchAll();
+    } catch(PDOException $e){
+        $error_message = $e->getMessage();
+        echo "<p>Error query: $error_message</p>";
+        exit();
+    }
 }
 
 function getMangaById($id){
@@ -194,8 +219,7 @@ function getMangaById($id){
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":id",$id);
 		$cmd->execute();
-		$result = $cmd->fetch();
-		return $result;
+        return $cmd->fetch();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -210,8 +234,7 @@ function getMangaByName($name){
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":name",$name);
 		$cmd->execute();
-		$result = $cmd->fetch();
-		return $result;
+        return $cmd->fetch();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -226,8 +249,7 @@ function getMangaByUser($id_user){
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":id_user",$id_user);
 		$cmd->execute();
-		$result = $cmd->fetchAll();
-		return $result;
+        return $cmd->fetchAll();
 	} catch(PDOException $e){
 		$error_message = $e->getMessage();
 		echo "<p>Error query: $error_message</p>";
@@ -323,7 +345,7 @@ function deleteManga($id_manga){
 		$sql = "DELETE FROM user_manga WHERE Id_manga=:id_manga";
 		$cmd = $database->prepare($sql);
 		$cmd->bindValue(":id_manga", $id_manga);
-		$row = $cmd->execute();
+		$cmd->execute();
 
 		$sql = "DELETE FROM user_manga_action WHERE Id_manga=:id_manga";
 		$cmd = $database->prepare($sql);
@@ -385,8 +407,7 @@ function getUserMangaAction($id_user, $id_manga){
 	$cmd->bindValue(":id_user", $id_user);
 	$cmd->bindValue(":id_manga", $id_manga);
 	$cmd->execute();
-	$result = $cmd->fetch();
-	return $result;
+    return $cmd->fetch();
 }
 
 function getUserManga($id_manga){
@@ -396,8 +417,7 @@ function getUserManga($id_manga){
 	$cmd = $database->prepare($sql);
 	$cmd->bindValue(":id_manga", $id_manga);
 	$cmd->execute();
-	$result = $cmd->fetch();
-	return $result;
+    return $cmd->fetch();
 }
 
 function getLikeManga($id_manga){
@@ -430,8 +450,18 @@ function addChapterManga($id_manga, $name, $chap){
 	$cmd->bindValue(":id_manga", $id_manga);
 	$cmd->bindValue(":name", $name);
 	$cmd->bindValue(":chap", $chap);
-	$result = $cmd->execute();
-	return $result;
+    return $cmd->execute();
+}
+
+function editChapterManga($id, $name, $chap){
+    $database = DATABASE::connect();
+
+    $sql = "UPDATE chapter SET Name=:name, Chap=:chap WHERE Id=:id";
+    $cmd = $database->prepare($sql);
+    $cmd->bindValue(":id", $id);
+    $cmd->bindValue(":name", $name);
+    $cmd->bindValue(":chap", $chap);
+    return $cmd->execute();
 }
 
 function getChaptersManga($id_manga){
@@ -441,8 +471,7 @@ function getChaptersManga($id_manga){
 	$cmd = $database->prepare($sql);
 	$cmd->bindValue(":id_manga", $id_manga);
 	$cmd->execute();
-	$result = $cmd->fetchAll();
-	return $result;
+    return $cmd->fetchAll();
 }
 
 function getChapterByIdManga($chap, $id_manga){
@@ -453,8 +482,7 @@ function getChapterByIdManga($chap, $id_manga){
 	$cmd->bindValue(":id_manga", $id_manga);
 	$cmd->bindValue(":chap", $chap);
 	$cmd->execute();
-	$result = $cmd->fetch();
-	return $result;
+    return $cmd->fetch();
 }
 
 function getMissingChapterManga($id_manga){
@@ -470,6 +498,28 @@ function getMissingChapterManga($id_manga){
 	$cmd->execute();
 	$result = $cmd->fetch();
 	return $result['missing_number'];
+}
+
+function getChapterNext($chap, $id_manga){
+    $database = DATABASE::connect();
+
+    $sql = "SELECT * FROM chapter WHERE Id_manga = :id_manga AND Chap > :chap ORDER BY Chap LIMIT 1";
+    $cmd = $database->prepare($sql);
+    $cmd->bindValue(":id_manga", $id_manga);
+    $cmd->bindValue(":chap", $chap);
+    $cmd->execute();
+    return $cmd->fetch();
+}
+
+function getChapterBack($chap, $id_manga){
+    $database = DATABASE::connect();
+
+    $sql = "SELECT * FROM chapter WHERE Id_manga = :id_manga AND Chap < :chap ORDER BY  Chap DESC LIMIT 1";
+    $cmd = $database->prepare($sql);
+    $cmd->bindValue(":id_manga", $id_manga);
+    $cmd->bindValue(":chap", $chap);
+    $cmd->execute();
+    return $cmd->fetch();
 }
 
 function likeManga($id_manga, $id_user){
@@ -543,5 +593,3 @@ function followManga($id_manga, $id_user){
 		exit();
 	}
 }
-
-?>

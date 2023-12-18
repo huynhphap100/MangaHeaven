@@ -4,6 +4,7 @@
 	$request = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : "null";
 	$user = (isset($_SESSION['user'])) ? $_SESSION['user'] : null;
 
+	$categoryAll = getCategories();
 	include "title.php";
 	switch ($request) {
 		case "login":
@@ -47,13 +48,25 @@
 				header("Location: ../WebDocTruyen");
 				break;
 			}
-			$id = $_REQUEST['id'];
-			$manga = getMangaById($id);
-			$chapters = getChaptersManga($id);
-			$chap = getChapterByIdManga($_REQUEST['chap'], $id);
+			$id_manga = $_REQUEST['id'];
+			$chap = $_REQUEST['chap'];
+			$manga = getMangaById($id_manga);
+			$userManga = getUserManga($id_manga);
+			$chapters = getChaptersManga($id_manga);
+			$chapter = getChapterByIdManga($chap, $id_manga);
+			$chapterNext = getChapterNext($chap, $id_manga);
+			$chapterBack = getChapterBack($chap, $id_manga);
 			include "manga/readManga.php";
 			break;
 		default:
+			$mangasTop = getMangasTop(3);
+			if(isset($_GET['category'])){
+				$mangas = getMangaByCategoryId($_GET['category']);
+			} else if(isset($_GET['search'])){
+				$mangas = getMangaBySearch($_GET['search']);
+			} else {
+				$mangas = getMangas();
+			}
 			include "home/popularManga.php";
 			include "home/listManga.php";
 			break;

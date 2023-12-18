@@ -1,5 +1,3 @@
-<?php 
-	unset($_SESSION['user']);
-	$user = null;
-	header('Location: ../WebDocTruyen');
-?>
+<?php
+unset($_SESSION['user']);
+header('Location: ../WebDocTruyen');
